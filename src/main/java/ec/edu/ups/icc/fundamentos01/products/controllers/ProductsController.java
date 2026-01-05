@@ -3,9 +3,13 @@ package ec.edu.ups.icc.fundamentos01.products.controllers;
 import ec.edu.ups.icc.fundamentos01.products.dtos.*;
 import ec.edu.ups.icc.fundamentos01.products.mappers.ProductMapper;
 import ec.edu.ups.icc.fundamentos01.products.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
@@ -33,19 +37,19 @@ public class ProductsController {
 
     // POST
     @PostMapping
-    public ProductResponseDto create(@RequestBody CreateProductDto dto) {
+    public ProductResponseDto create(@Valid @RequestBody CreateProductDto dto) {
         return service.create(dto);
     }
 
     // PUT
     @PutMapping("/{id}")
-    public ProductResponseDto update(@PathVariable int id, @RequestBody UpdateProductDto dto) {
+    public ProductResponseDto update(@PathVariable int id, @Valid @RequestBody UpdateProductDto dto) {
         return service.update(id, dto);
     }
 
     // PATCH
     @PatchMapping("/{id}")
-    public ProductResponseDto partialUpdate(@PathVariable int id, @RequestBody PartialUpdateProductDto dto) {
+    public ProductResponseDto partialUpdate(@PathVariable int id, @Valid @RequestBody PartialUpdateProductDto dto) {
         return service.partialUpdate(id, dto);
     }
 
@@ -60,6 +64,25 @@ public class ProductsController {
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFound(IllegalStateException ex) {
+        return Map.of("error", ex.getMessage());
+    }
+
+    // Validation exception (DTO validation)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, List<String>> handleValidation(MethodArgumentNotValidException ex) {
+        List<String> errors = ex.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .map(e -> e.getDefaultMessage())
+            .collect(Collectors.toList());
+        return Map.of("errors", errors);
+    }
+
+    // Business validation errors (domain model)
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleBadRequest(IllegalArgumentException ex) {
         return Map.of("error", ex.getMessage());
     }
 

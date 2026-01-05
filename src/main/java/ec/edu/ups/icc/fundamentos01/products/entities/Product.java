@@ -11,13 +11,24 @@ public class Product {
     private int stock;
 
     public Product(int id, String name, double price, int stock) {
+        // Validaciones de dominio
+        if (name == null || name.isBlank() || name.length() < 3) {
+            throw new IllegalArgumentException("Nombre inválido: debe tener al menos 3 caracteres");
+        }
+        if (price < 0) {
+            throw new IllegalArgumentException("Precio inválido: no puede ser negativo");
+        }
+        if (stock < 0) {
+            throw new IllegalArgumentException("Stock inválido: no puede ser negativo");
+        }
+
         this.id = id;
         this.name = name;
         this.price = price;
         this.stock = stock;
     }
 
-    // ===== Getters y Setters =====
+
     public int getId() { return id; }
     public String getName() { return name; }
     public double getPrice() { return price; }
@@ -28,7 +39,6 @@ public class Product {
     public void setPrice(double price) { this.price = price; }
     public void setStock(int stock) { this.stock = stock; }
 
-    // ================= FACTORY METHODS =================
 
     public static Product fromEntity(ProductEntity entity) {
         return new Product(
@@ -43,7 +53,7 @@ public class Product {
         return new Product(0, dto.name, dto.price, dto.stock);
     }
 
-    // ================= CONVERSIONS =================
+    
 
     public ProductEntity toEntity() {
         ProductEntity entity = new ProductEntity();
@@ -56,9 +66,20 @@ public class Product {
         return entity;
     }
 
-    // ================= BUSINESS LOGIC =================
+    
 
     public Product update(UpdateProductDto dto) {
+        // Validaciones
+        if (dto.name == null || dto.name.isBlank() || dto.name.length() < 3) {
+            throw new IllegalArgumentException("Nombre inválido: debe tener al menos 3 caracteres");
+        }
+        if (dto.price < 0) {
+            throw new IllegalArgumentException("Precio inválido: no puede ser negativo");
+        }
+        if (dto.stock < 0) {
+            throw new IllegalArgumentException("Stock inválido: no puede ser negativo");
+        }
+
         this.name = dto.name;
         this.price = dto.price;
         this.stock = dto.stock;
@@ -66,9 +87,20 @@ public class Product {
     }
 
     public Product partialUpdate(PartialUpdateProductDto dto) {
-        if (dto.name != null) this.name = dto.name;
-        if (dto.price != null) this.price = dto.price;
-        if (dto.stock != null) this.stock = dto.stock;
+        if (dto.name != null) {
+            if (dto.name.isBlank() || dto.name.length() < 3) {
+                throw new IllegalArgumentException("Nombre inválido: debe tener al menos 3 caracteres");
+            }
+            this.name = dto.name;
+        }
+        if (dto.price != null) {
+            if (dto.price < 0) throw new IllegalArgumentException("Precio inválido: no puede ser negativo");
+            this.price = dto.price;
+        }
+        if (dto.stock != null) {
+            if (dto.stock < 0) throw new IllegalArgumentException("Stock inválido: no puede ser negativo");
+            this.stock = dto.stock;
+        }
         return this;
     }
 }
