@@ -2,6 +2,7 @@ package ec.edu.ups.icc.fundamentos01.products.entities;
 
 import ec.edu.ups.icc.fundamentos01.products.entities.ProductEntity;
 import ec.edu.ups.icc.fundamentos01.products.dtos.*;
+import ec.edu.ups.icc.fundamentos01.exception.domain.BadRequestException;
 
 public class Product {
 
@@ -13,13 +14,13 @@ public class Product {
     public Product(int id, String name, double price, int stock) {
         // Validaciones de dominio
         if (name == null || name.isBlank() || name.length() < 3) {
-            throw new IllegalArgumentException("Nombre inválido: debe tener al menos 3 caracteres");
+            throw new BadRequestException("Nombre inválido: debe tener al menos 3 caracteres");
         }
         if (price < 0) {
-            throw new IllegalArgumentException("Precio inválido: no puede ser negativo");
+            throw new BadRequestException("Precio inválido: no puede ser negativo");
         }
         if (stock < 0) {
-            throw new IllegalArgumentException("Stock inválido: no puede ser negativo");
+            throw new BadRequestException("Stock inválido: no puede ser negativo");
         }
 
         this.id = id;
@@ -71,13 +72,13 @@ public class Product {
     public Product update(UpdateProductDto dto) {
         // Validaciones
         if (dto.name == null || dto.name.isBlank() || dto.name.length() < 3) {
-            throw new IllegalArgumentException("Nombre inválido: debe tener al menos 3 caracteres");
+            throw new BadRequestException("Nombre inválido: debe tener al menos 3 caracteres");
         }
         if (dto.price < 0) {
-            throw new IllegalArgumentException("Precio inválido: no puede ser negativo");
+            throw new BadRequestException("Precio inválido: no puede ser negativo");
         }
         if (dto.stock < 0) {
-            throw new IllegalArgumentException("Stock inválido: no puede ser negativo");
+            throw new BadRequestException("Stock inválido: no puede ser negativo");
         }
 
         this.name = dto.name;
@@ -89,16 +90,16 @@ public class Product {
     public Product partialUpdate(PartialUpdateProductDto dto) {
         if (dto.name != null) {
             if (dto.name.isBlank() || dto.name.length() < 3) {
-                throw new IllegalArgumentException("Nombre inválido: debe tener al menos 3 caracteres");
+                throw new BadRequestException("Nombre inválido: debe tener al menos 3 caracteres");
             }
             this.name = dto.name;
         }
         if (dto.price != null) {
-            if (dto.price < 0) throw new IllegalArgumentException("Precio inválido: no puede ser negativo");
+            if (dto.price < 0) throw new BadRequestException("Precio inválido: no puede ser negativo");
             this.price = dto.price;
         }
         if (dto.stock != null) {
-            if (dto.stock < 0) throw new IllegalArgumentException("Stock inválido: no puede ser negativo");
+            if (dto.stock < 0) throw new BadRequestException("Stock inválido: no puede ser negativo");
             this.stock = dto.stock;
         }
         return this;

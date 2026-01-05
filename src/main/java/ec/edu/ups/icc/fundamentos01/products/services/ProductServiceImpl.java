@@ -7,6 +7,8 @@ import ec.edu.ups.icc.fundamentos01.products.dtos.UpdateProductDto;
 import ec.edu.ups.icc.fundamentos01.products.entities.Product;
 import ec.edu.ups.icc.fundamentos01.products.mappers.ProductMapper;
 import ec.edu.ups.icc.fundamentos01.products.repositories.ProductRepository;
+import ec.edu.ups.icc.fundamentos01.exception.domain.ConflictException;
+import ec.edu.ups.icc.fundamentos01.exception.domain.NotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -34,12 +36,16 @@ public class ProductServiceImpl implements ProductService {
         return repo.findById((long) id)
             .map(Product::fromEntity)
             .map(ProductMapper::toResponse)
-            .orElseThrow(() -> new IllegalStateException("Producto no encontrado"));
+            .orElseThrow(() -> new NotFoundException("Producto no encontrado"));
     }
 
     @Override
     public ProductResponseDto create(CreateProductDto dto) {
-        // Save entity and convert to response DTO
+        // Regla de negocio: nombre único
+        if (repo.existsByName(dto.name)) {
+            throw new ConflictException("El nombre ya está registrado");
+        }
+
         var saved = repo.save(Product.fromCreateDto(dto).toEntity());
         return ProductMapper.toResponse(Product.fromEntity(saved));
     }
@@ -53,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
             .map(repo::save)
             .map(Product::fromEntity)
             .map(ProductMapper::toResponse)
-            .orElseThrow(() -> new IllegalStateException("Producto no encontrado"));
+            .orElseThrow(() -> new NotFoundException("Producto no encontrado"));
     }
 
     @Override
@@ -65,13 +71,13 @@ public class ProductServiceImpl implements ProductService {
             .map(repo::save)
             .map(Product::fromEntity)
             .map(ProductMapper::toResponse)
-            .orElseThrow(() -> new IllegalStateException("Producto no encontrado"));
+            .orElseThrow(() -> new NotFoundException("Producto no encontrado"));
     }
 
     @Override
     public void delete(int id) {
         repo.findById((long) id)
             .ifPresentOrElse(repo::delete,
-                () -> { throw new IllegalStateException("Producto no encontrado"); });
+                () -> { throw new NotFoundException("Producto no encontrado"); });
     }
 }

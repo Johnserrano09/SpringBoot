@@ -4,12 +4,8 @@ import ec.edu.ups.icc.fundamentos01.products.dtos.*;
 import ec.edu.ups.icc.fundamentos01.products.mappers.ProductMapper;
 import ec.edu.ups.icc.fundamentos01.products.services.ProductService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
@@ -58,32 +54,6 @@ public class ProductsController {
     public Map<String, String> delete(@PathVariable int id) {
         service.delete(id);
         return Map.of("message", "Deleted successfully");
-    }
-
-    // Exception handler for controlled errors
-    @ExceptionHandler(IllegalStateException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleNotFound(IllegalStateException ex) {
-        return Map.of("error", ex.getMessage());
-    }
-
-    // Validation exception (DTO validation)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, List<String>> handleValidation(MethodArgumentNotValidException ex) {
-        List<String> errors = ex.getBindingResult()
-            .getFieldErrors()
-            .stream()
-            .map(e -> e.getDefaultMessage())
-            .collect(Collectors.toList());
-        return Map.of("errors", errors);
-    }
-
-    // Business validation errors (domain model)
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleBadRequest(IllegalArgumentException ex) {
-        return Map.of("error", ex.getMessage());
     }
 
 }
