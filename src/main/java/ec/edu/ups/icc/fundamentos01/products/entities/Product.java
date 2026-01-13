@@ -7,11 +7,18 @@ import ec.edu.ups.icc.fundamentos01.exception.domain.BadRequestException;
 public class Product {
 
     private int id;
+    public Product(int id, String name, double price, int stock) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
+    }
+
     private String name;
     private double price;
     private int stock;
 
-    public Product(int id, String name, double price, int stock) {
+    public Product( String name, double price, int stock, String description) {
         // Validaciones de dominio
         if (name == null || name.isBlank() || name.length() < 3) {
             throw new BadRequestException("Nombre inválido: debe tener al menos 3 caracteres");
@@ -103,5 +110,13 @@ public class Product {
             this.stock = dto.stock;
         }
         return this;
+    }
+
+    public static Product fromDto(CreateProductDto dto) {
+        return new Product(
+            dto.name,
+            dto.price,
+            dto.description
+        );
     }
 }

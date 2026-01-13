@@ -15,4 +15,8 @@ public interface ProductService {
     ProductResponseDto update(int id, UpdateProductDto dto);
     ProductResponseDto partialUpdate(int id, PartialUpdateProductDto dto);
     void delete(int id);
+
+    boolean validateName(Integer id, String name);
+
+    List<ProductResponseDto> findAll();
 }

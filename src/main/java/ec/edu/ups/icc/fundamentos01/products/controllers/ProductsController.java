@@ -4,6 +4,9 @@ import ec.edu.ups.icc.fundamentos01.products.dtos.*;
 import ec.edu.ups.icc.fundamentos01.products.mappers.ProductMapper;
 import ec.edu.ups.icc.fundamentos01.products.services.ProductService;
 import jakarta.validation.Valid;
+
+import org.apache.catalina.connector.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
@@ -55,6 +58,14 @@ public class ProductsController {
         service.delete(id);
         return Map.of("message", "Deleted successfully");
     }
+
+    @PostMapping("/validate-name")
+    public ResponseEntity<java.util.Map<String, Boolean>> validateName(@RequestBody ValidateProductDto dto) {
+        boolean valid = service.validateName(dto.id, dto.name);
+        return ResponseEntity.ok(java.util.Map.of("valid", valid));
+
+    }
+
 
 }
             

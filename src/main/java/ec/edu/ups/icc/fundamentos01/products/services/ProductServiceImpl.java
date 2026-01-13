@@ -80,4 +80,25 @@ public class ProductServiceImpl implements ProductService {
             .ifPresentOrElse(repo::delete,
                 () -> { throw new NotFoundException("Producto no encontrado"); });
     }
+
+    @Override
+    public boolean validateName(Integer id, String name) {
+        repo.findByName(name)
+            .ifPresent(existing -> {
+                if (id == null || existing.getId().longValue() != id.longValue()) {
+                    throw new ConflictException(
+                        "Ya existe un producto con el nombre: " + name);
+                }
+            });
+        return true;
+    }
+
+    public ProductResponseDto secureUpdate(int id, SecureUpdate dto){
+
+        productEntity = repo.findById((long) id)
+            .orElseThrow(() -> new NotFoundException("Producto no encontrado"));
+            if(dto.price != null && dto.price > 100){
+                throw new Buni
+            }
+    }
 }
