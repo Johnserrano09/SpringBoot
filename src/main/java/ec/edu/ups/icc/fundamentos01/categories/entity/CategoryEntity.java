@@ -1,51 +1,71 @@
 package ec.edu.ups.icc.fundamentos01.categories.entity;
 
-import ec.edu.ups.icc.fundamentos01.users.entities.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
+import ec.edu.ups.icc.fundamentos01.core.entities.BaseModel;
+import ec.edu.ups.icc.fundamentos01.products.entities.ProductEntity;
 
 @Entity
 @Table(name = "categories")
-public class CategoryEntity {
+public class CategoryEntity extends BaseModel {
     
-    @Column(nullable = false, length = 100, unique = true)
+    @Column(nullable = false, length = 120, unique = true)
     private String name;
 
     @Column(length = 500)
     private String description;
 
-    //Atributos relacionales
+ 
+    @ManyToMany(mappedBy = "categories")
+    private Set<ProductEntity> products = new HashSet<>();
+
     
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
 
-    private UserEntity owner;
-
-    private CategoryEntity category;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    public CategoryEntity() {
+    }
 
     public CategoryEntity(String name, String description) {
         this.name = name;
         this.description = description;
     }
-    // Getters and Setters
+
+
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
+    public Set<ProductEntity> getProducts() {
+        return products;
+    }
+
+    public void setProducts(Set<ProductEntity> products) {
+        this.products = products != null ? products : new HashSet<>();
+    }
+
     
+
+    public void addProduct(ProductEntity product) {
+        this.products.add(product);
+    }
+
+    public void removeProduct(ProductEntity product) {
+        this.products.remove(product);
+    }
 }

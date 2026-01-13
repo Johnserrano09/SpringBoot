@@ -1,25 +1,41 @@
 package ec.edu.ups.icc.fundamentos01.products.dtos;
 
-import ec.edu.ups.icc.fundamentos01.categories.dto.CategoriaResponseDto.CategorySummaryDto;
+import java.time.LocalDateTime;
+import java.util.List;
 
+/**
+ * DTO de respuesta para productos
+ * Estructura anidada para mejor semántica y usabilidad desde el frontend
+ */
 public class ProductResponseDto {
-    public int id;
+
+    public Long id;
     public String name;
-    public double price;
+    public Double price;
     public int stock;
+    public String description;
 
-    //aparesca sus categorias y su dueño
-    public UserSummaryDto userId;
+    // ============== OBJETOS ANIDADOS ==============
+    
+    public UserSummaryDto user;
+    public List<CategoryResponseDto> categories;
 
+    // ============== AUDITORÍA ==============
+    
+    public LocalDateTime createdAt;
+    public LocalDateTime updatedAt;
 
-
-    public CategorySummaryDto category;
-
+    // ============== DTOs INTERNOS ==============
+    
     public static class UserSummaryDto {
-        public int id;
+        public Long id;
         public String name;
         public String email;
     }
 
-    
+    public static class CategoryResponseDto {
+        public Long id;
+        public String name;
+        public String description;
+    }
 }
